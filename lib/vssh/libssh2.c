@@ -3767,8 +3767,9 @@ static CURLcode sftp_disconnect(struct Curl_easy *data,
   (void)dead_connection;
 
   if(sshc) {
-    if(sshc->ssh_session) {
-      /* only if there is a session still around to use! */
+    if(sshc->ssh_session && !conn->bits.close) {
+      /* only if there is a session still around to use and not marked as
+         closed */
       CURL_TRC_SSH(data, "DISCONNECT starts now");
       myssh_to(data, sshc, SSH_SFTP_SHUTDOWN);
       result = ssh_block_statemach(data, sshc, sshp, TRUE);
